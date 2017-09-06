@@ -34,6 +34,7 @@
   environment:
     JUNIT_OUTPUT_DIR: '{{ atomic_test_output_dir }}'
   with_items: '{{ atomic_test_tests }}'
+  ignore_errors: True
 
 - name: Combien JUnit results into singlefile
   shell: 'xunitmerge {{ atomic_test_output_dir}}/*.xml {{ atomic_test_output_dir }}/{{ atomic_test_output_filename }}'
