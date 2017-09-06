@@ -1,0 +1,45 @@
+---
+# Ensure the necessary packages are installed
+#
+- name: Ensure python2-pip and git are installed
+  package:
+    name: '{{ item }}'
+  with_items:
+    - python2-pip
+    - git
+
+- name: Ensure xunitmerge is installed
+  pip:
+    name: xunitmerge
+
+# Ensure the tests are correctly retrieved in their proper version
+#
+- name: Download atomic-host-tests
+  git:
+    repo: '{{ atomic_test_repository }}'
+    version: '{{ atomic_test_version }}'
+    dest: '{{ atomic_test_filepath }}'
+    force: yes
+
+# Ensure the folder that contain the result is created
+#
+- name: Create the atomic_test_output_dir folder
+  file:
+    state: directory
+    path: '{{ atomic_test_output_dir }}'
+    recurse: yes
+
+- name: Run tests
+  command: 'ansible-playbook -i hosts --limit atomic {{ atomic_test_filepath }}/tests/{{ item }}/main.yml'
+  environment:
+    JUNIT_OUTPUT_DIR: '{{ atomic_test_output_dir }}'
+  with_items: '{{ atomic_test_tests }}'
+
+- name: Combien JUnit results into singlefile
+  shell: 'xunitmerge {{ atomic_test_output_dir}}/*.xml {{ atomic_test_output_dir }}/{{ atomic_test_output_filename }}'
+
+- name: Retrieve the result
+  fetch:
+    src: '{{ atomic_test_output_dir }}/{{ atomic_test_output_filename }}'
+    dest: "{{ lookup('env', 'PWD') }}/{{ atomic_test_output_filename }}"
+    flat: yes
