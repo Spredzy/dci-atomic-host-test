@@ -43,3 +43,8 @@
     src: '{{ atomic_test_output_dir }}/{{ atomic_test_output_filename }}'
     dest: "{{ lookup('env', 'PWD') }}/{{ atomic_test_output_filename }}"
     flat: yes
+
+- name: Clean up
+  file:
+    state: absent
+    path: '{{ atomic_test_output_dir }}'
