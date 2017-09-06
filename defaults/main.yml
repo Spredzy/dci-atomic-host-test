@@ -1,7 +1,7 @@
 ---
 atomic_test_repository: https://github.com/projectatomic/atomic-host-tests.git
 atomic_test_version: master
-atomic_test_filepath: /tmp
+atomic_test_filepath: /tmp/atomic-host-tests
 atomic_test_tests:
   - admin-unlock
   - rpm-ostree
